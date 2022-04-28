@@ -1,21 +1,20 @@
-import axios from "axios";
+import {formatDate} from "../../utils/formatters";
+import axiosClient from "../apiClient";
 
-export const axiosClient = axios.create({
-  baseURL: `https://sgip3.tse.jus.br/sgip3-consulta/api/v1/orgaoPartidario/`,
-});
+const DATA_INICIO_VIGENCIA = new Date(2019, 0, 1);
+const DATA_FIM_VIGENCIA = new Date(2021, 4, 30);
 
-axiosClient.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+export async function getListOrgaos(lista, typeList) {
+  const data = await fetchOrgaos(lista);
 
-export async function fetchOrgaos(list) {
+  const dateFilteredList = filterListByDate(data);
+
+  const resultList = filterListByTipoOrgao(dateFilteredList, typeList);
+
+  return resultList;
+}
+
+async function fetchOrgaos(list) {
   const resultList = [];
   await Promise.all(list.map((lista) => axiosClient.get(lista))).then(
     (data) => {
@@ -27,16 +26,6 @@ export async function fetchOrgaos(list) {
   return resultList;
 }
 
-export async function getListOrgaos(lista, typeList) {
-  const data = await fetchOrgaos(lista);
-
-  const dateFilteredList = filterListByDate(data);
-
-  const resultList = filterListByTypeOrgao(dateFilteredList, typeList);
-
-  return resultList;
-}
-
 function filterListByDate(data) {
   const resultList = [];
 
@@ -45,13 +34,10 @@ function filterListByDate(data) {
     const dataFimVigencia = formatDate(item.dataFimVigencia);
 
     if (dataInicioVigencia && dataFimVigencia) {
-      const dataInicio = new Date(dataInicioVigencia);
-      const dataFim = new Date(dataFimVigencia);
+      const dataInicio = dataInicioVigencia;
+      const dataFim = dataFimVigencia;
 
-      if (
-        dataInicio >= new Date(2019, 1, 1) &&
-        dataFim <= new Date(2021, 4, 30)
-      ) {
+      if (dataInicio >= DATA_INICIO_VIGENCIA && dataFim <= DATA_FIM_VIGENCIA) {
         resultList.push(item);
       }
     }
@@ -59,7 +45,7 @@ function filterListByDate(data) {
   return resultList;
 }
 
-function filterListByTypeOrgao(data, typeList) {
+function filterListByTipoOrgao(data, typeList) {
   const resultList = [];
 
   data.forEach((item) => {
@@ -69,12 +55,4 @@ function filterListByTypeOrgao(data, typeList) {
     }
   });
   return resultList;
-}
-
-function formatDate(rawDate) {
-  rawDate = rawDate.split("/");
-  rawDate = rawDate.reverse();
-
-  const date = new Date(rawDate[0], rawDate[1] - 1, rawDate[2]);
-  return date;
 }

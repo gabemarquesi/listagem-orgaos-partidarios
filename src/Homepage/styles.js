@@ -40,3 +40,29 @@ export const AnalyticsContainer = styled.div`
     color: green;
   }
 `;
+
+export const StateContentContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  color: gray;
+  margin-top: 35px;
+`;
+
+export const FilterCategorySection = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  margin-left: 15px;
+  Form {
+    margin-right: 60px;
+  }
+`;
+
+export const EstadosList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+`;

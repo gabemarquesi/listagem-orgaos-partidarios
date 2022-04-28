@@ -1,13 +1,20 @@
 import React, {useEffect, useState} from "react";
 import {Form, Button} from "react-bootstrap";
-import {HeaderTitle, FilterContainer, AnalyticsContainer} from "./styles";
+import {
+  HeaderTitle,
+  FilterContainer,
+  AnalyticsContainer,
+  StateContentContainer,
+  FilterCategorySection,
+  EstadosList,
+} from "./styles";
 import {MixedCheckbox} from "@reach/checkbox";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import {Spinner, Table} from "react-bootstrap";
-import {getListOrgaos} from "../../api/lib/orgaos";
+import {getListOrgaos} from "../api/lib/orgaos";
 
-export function OrgaosList() {
+export default function Homepage() {
   let [estados, setEstados] = useState({
     AC: false,
     AL: false,
@@ -137,15 +144,8 @@ export function OrgaosList() {
     <>
       <HeaderTitle>Listagem de Orgãos Partidários</HeaderTitle>
       <FilterContainer>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "start",
-            marginLeft: "15px",
-          }}
-        >
-          <Form name="partido" style={{marginRight: "60px"}}>
+        <FilterCategorySection>
+          <Form name="partido">
             <legend>Partidos</legend>
             <div>
               <input
@@ -204,10 +204,9 @@ export function OrgaosList() {
               <label>Comissão interventora</label>
             </div>
           </Form>
-        </div>
+        </FilterCategorySection>
         <Form name="estados" style={{marginLeft: "15px"}}>
           <legend>Estados</legend>
-
           <label>
             <MixedCheckbox
               style={{marginRight: "2px"}}
@@ -219,16 +218,7 @@ export function OrgaosList() {
           </label>
           <br />
           <br />
-          <ul
-            style={{
-              listStyle: "none",
-              padding: 0,
-              margin: 0,
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-around",
-            }}
-          >
+          <EstadosList>
             {Object.entries(estados).map(([value, state]) => (
               <li key={value}>
                 <label>
@@ -243,7 +233,7 @@ export function OrgaosList() {
                 </label>
               </li>
             ))}
-          </ul>
+          </EstadosList>
         </Form>
         <br />
         <Button onClick={handleClick}>Gerar lista</Button>
@@ -290,28 +280,14 @@ export function OrgaosList() {
           })}
       </Table>
       {isEmpty && !isLoading ? (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            color: "gray",
-            marginTop: "35px",
-          }}
-        >
+        <StateContentContainer>
           <h5>Não há dados a serem mostrados</h5>
-        </div>
+        </StateContentContainer>
       ) : (
         isLoading && (
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              color: "gray",
-              marginTop: "35px",
-            }}
-          >
+          <StateContentContainer>
             <Spinner animation="border" variant="primary" />
-          </div>
+          </StateContentContainer>
         )
       )}
     </>
