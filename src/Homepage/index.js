@@ -104,7 +104,17 @@ export default function Homepage() {
         )
       )
     );
-    setList(lista);
+    if (
+      listaEstados.length > 0 &&
+      partidos.length > 0 &&
+      tipoOrgao.length > 0
+    ) {
+      setList(lista);
+    } else {
+      alert("Selecione pelo menos um estado, partido e tipo de orgão");
+      setLoading(false);
+      setIsEmpty(true);
+    }
   }
 
   let todosEstadosSelecionados = Object.keys(estados).every(
@@ -238,7 +248,7 @@ export default function Homepage() {
         <br />
         <Button onClick={handleClick}>Gerar lista</Button>
       </FilterContainer>
-      {data?.length > 0 && (
+      {!isEmpty && (
         <AnalyticsContainer className="analytics">
           <h4>
             Quantidade de orgãos nesta lista: <span>{data.length}</span>
