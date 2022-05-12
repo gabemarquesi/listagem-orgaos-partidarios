@@ -13,6 +13,10 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 import {Spinner, Table} from "react-bootstrap";
 import {getListOrgaos} from "../api/lib/orgaos";
+import DatePicker, {registerLocale} from "react-datepicker";
+import pt from "date-fns/locale/pt-BR";
+
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function Homepage() {
   let [estados, setEstados] = useState({
@@ -48,13 +52,30 @@ export default function Homepage() {
   const [data, setData] = useState();
   const [list, setList] = useState([]);
   const [listType, setListType] = useState([]);
+  const [startDate, setStartDate] = useState(new Date(2019, 0, 1));
+  const [finishDate, setFinishDate] = useState(new Date(2021, 3, 30));
+
+  registerLocale("pt", pt);
 
   useEffect(() => {
     getList();
   }, [list]);
 
   async function getList() {
-    const formattedList = await getListOrgaos(list, listType);
+    if (startDate > finishDate) {
+      alert(
+        "A data do início da vigência deve ser menor que a data de fim da vigência"
+      );
+      setLoading(false);
+      setIsEmpty(true);
+      return;
+    }
+    const formattedList = await getListOrgaos(
+      list,
+      listType,
+      startDate,
+      finishDate
+    );
 
     setData(formattedList);
     setLoading(false);
@@ -104,6 +125,7 @@ export default function Homepage() {
         )
       )
     );
+
     if (
       listaEstados.length > 0 &&
       partidos.length > 0 &&
@@ -213,6 +235,23 @@ export default function Homepage() {
               />
               <label>Comissão interventora</label>
             </div>
+          </Form>
+          <Form name="data">
+            <legend>Data</legend>
+            <span>Início</span>
+            <DatePicker
+              locale={pt}
+              selected={startDate}
+              onChange={(date: Date) => setStartDate(date)}
+            />
+            <br />
+            <br />
+            <span>Fim</span>
+            <DatePicker
+              locale={pt}
+              selected={finishDate}
+              onChange={(date: Date) => setFinishDate(date)}
+            />
           </Form>
         </FilterCategorySection>
         <Form name="estados" style={{marginLeft: "15px"}}>

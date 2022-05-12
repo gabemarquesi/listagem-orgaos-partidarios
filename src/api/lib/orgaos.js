@@ -1,13 +1,10 @@
 import {formatDate} from "../../utils/formatters";
 import axiosClient from "../apiClient";
 
-const DATA_INICIO_VIGENCIA = new Date(2019, 0, 1);
-const DATA_FIM_VIGENCIA = new Date(2021, 4, 30);
-
-export async function getListOrgaos(lista, typeList) {
+export async function getListOrgaos(lista, typeList, startDate, finishDate) {
   const data = await fetchOrgaos(lista);
 
-  const dateFilteredList = filterListByDate(data);
+  const dateFilteredList = filterListByDate(data, startDate, finishDate);
 
   const resultList = filterListByTipoOrgao(dateFilteredList, typeList);
 
@@ -26,7 +23,7 @@ async function fetchOrgaos(list) {
   return resultList;
 }
 
-function filterListByDate(data) {
+function filterListByDate(data, startDate, finishDate) {
   const resultList = [];
 
   data.forEach((item) => {
@@ -37,7 +34,7 @@ function filterListByDate(data) {
       const dataInicio = dataInicioVigencia;
       const dataFim = dataFimVigencia;
 
-      if (dataInicio >= DATA_INICIO_VIGENCIA && dataFim <= DATA_FIM_VIGENCIA) {
+      if (dataInicio >= startDate && dataFim <= finishDate) {
         resultList.push(item);
       }
     }
