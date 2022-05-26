@@ -52,8 +52,7 @@ export default function Homepage() {
   const [data, setData] = useState();
   const [list, setList] = useState([]);
   const [listType, setListType] = useState([]);
-  const [startDate, setStartDate] = useState(new Date(2019, 0, 1));
-  const [finishDate, setFinishDate] = useState(new Date(2021, 3, 30));
+  const [date, setDate] = useState(new Date(2019, 0, 1));
 
   registerLocale("pt", pt);
 
@@ -62,20 +61,7 @@ export default function Homepage() {
   }, [list]);
 
   async function getList() {
-    if (startDate > finishDate) {
-      alert(
-        "A data do início da vigência deve ser menor que a data de fim da vigência"
-      );
-      setLoading(false);
-      setIsEmpty(true);
-      return;
-    }
-    const formattedList = await getListOrgaos(
-      list,
-      listType,
-      startDate,
-      finishDate
-    );
+    const formattedList = await getListOrgaos(list, listType, date);
 
     setData(formattedList);
     setLoading(false);
@@ -238,19 +224,10 @@ export default function Homepage() {
           </Form>
           <Form name="data">
             <legend>Data</legend>
-            <span>Início</span>
             <DatePicker
               locale={pt}
-              selected={startDate}
-              onChange={(date: Date) => setStartDate(date)}
-            />
-            <br />
-            <br />
-            <span>Fim</span>
-            <DatePicker
-              locale={pt}
-              selected={finishDate}
-              onChange={(date: Date) => setFinishDate(date)}
+              selected={date}
+              onChange={(date: Date) => setDate(date)}
             />
           </Form>
         </FilterCategorySection>

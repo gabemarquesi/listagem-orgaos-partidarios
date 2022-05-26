@@ -23,7 +23,7 @@ async function fetchOrgaos(list) {
   return resultList;
 }
 
-function filterListByDate(data, startDate, finishDate) {
+function filterListByDate(data, date) {
   const resultList = [];
 
   data.forEach((item) => {
@@ -31,10 +31,7 @@ function filterListByDate(data, startDate, finishDate) {
     const dataFimVigencia = formatDate(item.dataFimVigencia);
 
     if (dataInicioVigencia && dataFimVigencia) {
-      const dataInicio = dataInicioVigencia;
-      const dataFim = dataFimVigencia;
-
-      if (dataInicio >= startDate && dataFim <= finishDate) {
+      if (dataInicioVigencia <= date && date <= dataFimVigencia) {
         resultList.push(item);
       }
     }
